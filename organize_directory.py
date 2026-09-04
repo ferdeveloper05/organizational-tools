@@ -27,10 +27,12 @@ def main():
     time.sleep(1)
     
     print("Acontinuacion se le solicitara el nombre del directorio a ordenar.\n")
+    print("Si no se ingresa un nombre de directorio el script se aplicará al directorio 'Downloads'\n")
     print("Luego se validara el nombre del directorio y se procedera a organizar el directorio\n")
     
-    directory = input('Ingrese el nombre del directorio a ingresar: ')
-    path_validate = validar_ruta(Path.home() / directory)
+    directory = input('Ingrese el nombre del directorio a ingresar: ') 
+    option = directory if directory else "Downloads"
+    path_validate = validar_ruta(Path.home() / option)
     
     time.sleep(1)
     
