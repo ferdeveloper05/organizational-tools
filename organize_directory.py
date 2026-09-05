@@ -18,6 +18,7 @@ EXTENSIONES: dict[str, str] = {
     for categoria, list_ext in extensiones.items()
     for ext in list_ext
 }
+print(EXTENSIONES)
 
 def validar_ruta(path_dir: Path) -> Path | None:
     """ Retorna la ruta solo si existe y es un directorio valido """
@@ -27,7 +28,7 @@ def validar_ruta(path_dir: Path) -> Path | None:
     return None
     
     
-def crear_directorios(target_dir: Path): 
+def organizar_directorio(target_dir: Path): 
     print(f"Organizando archivos en: {target_dir}")
     
     for item in target_dir.iterdir():
@@ -48,17 +49,19 @@ def crear_directorios(target_dir: Path):
 def main(): 
     print("\n###################### ORGANIZADOR DE DIRECTORIOS ######################\n")
     
-    print("Acontinuacion se le solicitara el nombre del directorio a ordenar.\n")
-    print("Si no se ingresa un nombre de directorio el script se aplicará al directorio 'Downloads'\n")
-    print("Luego se validara el nombre del directorio y se procedera a organizar el directorio\n")
+    print("Si no ingresa una ruta, se aplicará al directorio 'Downloads'.")
     
-    directory = input('Ingrese el nombre del directorio a ingresar: ') 
-    option = directory if directory else "Downloads"
-    path_validate = validar_ruta(Path.home() / option)
+    directory_input = input('Ingrese el nombre del directorio: ').strip()
+    name_dir = directory_input if directory_input else "Downloads"
+    path_target = validar_ruta(Path.home() / name_dir)
+    
+    if not path_target:
+        print(f"\nError: La ruta '{Path.home() / name_dir}' no existe o no es un directorio válido.")
+        return
         
-    print("Directorio validado correctamente!")
-    
-    crear_directorios(path_validate, extensiones)    
+    print("\nDirectorio validado correctamente. Procesando...")
+    organizar_directorio(path_target)
+    print("\n¡Organización completada con éxito!")   
 
 
 if __name__ == '__main__':     
