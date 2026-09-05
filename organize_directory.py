@@ -1,30 +1,52 @@
 import shutil
-import time
 from pathlib import Path
 
 # generar reporte 
 
-def validar_ruta(path_dir: Path) -> Path | None: 
-    if path_dir.exists() and not path_dir.is_dir(): 
-        return
+extensiones = {
+    'Documents': ['.docx', '.pdf', '.txt', '.doc'], 
+    'Pictures': ['.png', '.jpeg', '.jpg', '.gif', '.webp'], 
+    'Code': ['.py', '.php', '.js', '.html', '.css'], 
+    'Music': ['.mp3'],
+    'Videos': ['.mp4'], 
+    'Spreadsheets': ['.csv', '.xls', '.xlsx'],
+    'Executables': ['.deb', '.exe']
+}
+
+EXTENSIONES: dict[str, str] = {
+    ext: categoria
+    for categoria, list_ext in extensiones.items()
+    for ext in list_ext
+}
+
+def validar_ruta(path_dir: Path) -> Path | None:
+    """ Retorna la ruta solo si existe y es un directorio valido """
+    if path_dir.exists() and path_dir.is_dir(): 
+        return path_dir
     
-    return path_dir  
+    return None
     
     
-def crear_directorios(path_validate_dir: Path, extensiones: dict[str: list[str]]): 
-    print("Creando directorios para organizar los archivos...")
-    for file in path_validate_dir.iterdir(): 
-        for name, exten in extensiones.items(): 
-            if file.suffix in exten:
-                new_dir = path_validate_dir.parent / name
-                new_dir.mkdir(exist_ok=True)
-                shutil.move(file, new_dir)
-    print("Moviendo los archivos a sus directorios correspondientes...")
+def crear_directorios(target_dir: Path): 
+    print(f"Organizando archivos en: {target_dir}")
+    
+    for item in target_dir.iterdir():
+        
+        if item.is_dir(): 
+            continue
+         
+        ext = item.suffix.lower()
+        if ext in EXTENSIONES:
+            categoria = EXTENSIONES[ext]
+            dest_dir = target_dir / categoria
+            dest_dir.mkdir(exist_ok=True)
+            
+            shutil.move(str(item), dest_dir / item.name)
+            print(f"Movido: {item.name} -> {categoria}/")
     
 
 def main(): 
     print("\n###################### ORGANIZADOR DE DIRECTORIOS ######################\n")
-    time.sleep(1)
     
     print("Acontinuacion se le solicitara el nombre del directorio a ordenar.\n")
     print("Si no se ingresa un nombre de directorio el script se aplicará al directorio 'Downloads'\n")
@@ -33,25 +55,11 @@ def main():
     directory = input('Ingrese el nombre del directorio a ingresar: ') 
     option = directory if directory else "Downloads"
     path_validate = validar_ruta(Path.home() / option)
-    
-    time.sleep(1)
-    
+        
     print("Directorio validado correctamente!")
-    time.sleep(1.5)
     
     crear_directorios(path_validate, extensiones)    
 
 
-if __name__ == '__main__': 
-    
-    extensiones = {
-        'Documents': ['.docx', '.pdf', '.txt', '.doc'], 
-        'Pictures': ['.png', '.jpeg', '.jpg', '.gif', '.webp'], 
-        'Code': ['.py', '.php', '.js', '.html', '.css'], 
-        'Music': ['.mp3'],
-        'Videos': ['.mp4'], 
-        'Spreadsheets': ['.csv', '.xls', '.xlsx'],
-        'Executables': ['.deb', '.exe']
-    }
-    
+if __name__ == '__main__':     
     main()
